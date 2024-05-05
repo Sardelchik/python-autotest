@@ -1,0 +1,9 @@
+name: avaible
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9.12
+  - requests
+  - selenium=3.141.0
+  - python-chromedriver-binary
+  - pytest
