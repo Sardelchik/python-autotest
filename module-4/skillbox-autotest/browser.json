@@ -3,7 +3,7 @@
         "default": "latest",
         "versions": {
             "latest": {
-                "image": ["C:/Users/eseni/skillbox-autotest/chromedriver.exe"]
+                "image": ["D:/python-autotest/module-4/skillbox-autotest/chromedriver.exe"]
             }
         }
     }
