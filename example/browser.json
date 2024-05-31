@@ -1,0 +1,10 @@
+{
+    "Chrome": {
+        "default": "latest",
+        "versions": {
+            "latest": {
+                "image": ["D:/python-autotest/example/chromedriver.exe"]
+            }
+        }
+    }
+}
