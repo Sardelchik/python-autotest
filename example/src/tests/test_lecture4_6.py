@@ -74,5 +74,3 @@ class TestClass:
         elem = driver.find_element(By.CSS_SELECTOR,'svg.viz>g>g:nth-of-type(10)')
         action_chains.move_to_element(elem).perform()
         time.sleep(5)
-
-
