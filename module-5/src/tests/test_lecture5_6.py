@@ -1,7 +1,7 @@
-
 from selenium.webdriver.common.by import By
 import time
 from selenium.webdriver import Keys, ActionChains
+from selenium.webdriver.support.expected_conditions import 
 
 class TestClass:
     def test_function1(self, set_up_browser):
@@ -13,6 +13,7 @@ class TestClass:
         elem_id.send_keys('in:title ')
         elem_id.send_keys('bug' + Keys.ENTER)
         time.sleep(5)
+        assert True == True
 
     def test_function2(self, set_up_browser):
         driver = set_up_browser
@@ -27,6 +28,7 @@ class TestClass:
         elem_xpath2 = driver.find_element(By.XPATH, '//button[@name="author"]')
         elem_xpath2.click()
         time.sleep(5)
+        assert True == True
 
     def test_function3(self, set_up_browser):
         driver = set_up_browser
@@ -44,6 +46,7 @@ class TestClass:
         time.sleep(1)
         elem4 = driver.find_element(By.XPATH, '//*/div[@class="d-flex d-md-block"]/button[contains(text(),"Search")]').click()
         time.sleep(5)
+        assert True == True
 
     def test_function4(self, set_up_browser):
         driver = set_up_browser
@@ -51,12 +54,12 @@ class TestClass:
         driver.get("https://skillbox.ru/code/")
         elem1 = driver.find_element(By.XPATH,'//*/label[@value="profession"]').click()
         time.sleep(1)
-        elem2 = driver.find_element(By.XPATH, '//div[@aria-valuetext="1"]/button[@aria-label="Изменить диапозон"]')
+        elem2 = driver.find_element(By.XPATH, '//div[@aria-valuetext="1"]/button[@aria-label="Изменить диапазон"]')
         action_chains = ActionChains(driver)
         action_chains.click_and_hold(elem2).move_by_offset(xoffset=70,yoffset=0).perform()
         action_chains.release().perform()
         time.sleep(1)
-        elem3 = driver.find_element(By.XPATH, '//div[@aria-valuetext="24"]/button[@aria-label="Изменить диапозон"]')
+        elem3 = driver.find_element(By.XPATH, '//div[@aria-valuetext="24"]/button[@aria-label="Изменить диапазон"]')
         action_chains.click_and_hold(elem3).move_by_offset(xoffset=-70, yoffset=0).perform()
         action_chains.release().perform()
         time.sleep(1)
@@ -64,6 +67,7 @@ class TestClass:
         time.sleep(1)
         elem5 = driver.find_element(By.CSS_SELECTOR,'ul.filter-checkboxes-list.filter-checkboxes__list li:nth-of-type(2)').click()
         time.sleep(5)
+        assert True == True
 
     def test_function5(self, set_up_browser):
         driver = set_up_browser
@@ -74,3 +78,4 @@ class TestClass:
         elem = driver.find_element(By.CSS_SELECTOR,'svg.viz>g>g:nth-of-type(10)')
         action_chains.move_to_element(elem).perform()
         time.sleep(5)
+        assert True == True

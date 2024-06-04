@@ -10,6 +10,6 @@ def set_up_browser():
     options = Options()
     options.page_load_strategy = 'normal'
     driver = Chrome(service=Service(ChromeDriverManager().install()))
-    driver.implicitly_wait(30)
+    driver.implicitly_wait(3)
     yield driver
     driver.quit()
