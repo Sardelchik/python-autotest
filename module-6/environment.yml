@@ -1,0 +1,9 @@
+name: autotest
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - requests
+  - python-chromedriver-binary
+  - selenium
+  - pytest
