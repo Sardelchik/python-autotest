@@ -23,7 +23,8 @@ class TestClass:
             elem_id.send_keys('bug' + Keys.ENTER)
 
         with allure.step('Ожидание результатов поиска'):
-            time.sleep(5)
+            wait = WebDriverWait(driver, 10)  # Указываем максимальное время ожидания в секундах
+            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div[class="js-navigation-container js-active-navigation-container"]')))
 
         with allure.step('Проверка результатов поиска'):
             issues = driver.find_elements(By.CSS_SELECTOR, 'div[class="js-navigation-container js-active-navigation-container"]')
