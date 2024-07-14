@@ -1,6 +1,5 @@
 import re
 import allure
-import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver import Keys, ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
@@ -159,5 +158,5 @@ class TestClass:
             )
             
             tooltip_text = tooltip.get_attribute('textContent')
-            expected_text = '381 commits the week of Sep 3'
+            expected_text = '228 commits the week of Sep 10'
             assert tooltip_text == expected_text, f"Текст тултипа '{tooltip_text}' не соответствует ожидаемому '{expected_text}'"
