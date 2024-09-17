@@ -1,0 +1,10 @@
+name: autotest
+dependencies:
+  - python
+  -pip:
+    - requests
+    - python-chromedriver-binary
+    - selenium
+    - pytest
+    - allure-pytest
+    - flake8
