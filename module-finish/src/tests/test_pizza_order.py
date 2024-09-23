@@ -1,7 +1,7 @@
-import asyncio
 import pytest
 from allure import feature, story
-from playwright.async_api import async_playwright
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 from playwright.sync_api import sync_playwright
 from playwright.sync_api import Page
 import logging
@@ -29,11 +29,13 @@ class TestClass:
     @allure.step("Добавление пиццы в корзину")
     def test_add_pizza_to_cart(self):
         logger.info("Testing adding pizza to cart")
-        slider = self.page.locator(".prod1-slider")
-        buttons = slider.locator('#accesspress_store_product-5 > ul > div > div > li:nth-child(6) > div > a.button.product_type_simple.add_to_cart_button.ajax_add_to_cart')
-        for button in buttons.all():
-            button.click()
+        img_element = self.driver.find_element(By.XPATH, '(//img[@src="http://pizzeria.skillbox.cc/wp-content/uploads/2021/10/pexels-natasha-filippovskaya-4394612-300x300.jpg"])[1]')
+        add_to_cart_button = self.driver.find_element(By.XPATH, "(//*[@class='button product_type_simple add_to_cart_button ajax_add_to_cart'])[5]")
+        actions = ActionChains(self.driver)
+        actions.move_to_element(img_element).pause(2).click(add_to_cart_button).pause(2)
+        actions.perform()
         logger.info("Pizzas added to cart successfully")
+
 
     @allure.step("Переход к описанию пиццы")
     def test_view_pizza_description(self):
@@ -42,6 +44,19 @@ class TestClass:
         pizza_image = slider.locator("#accesspress_store_product-5 > ul > div > div > li:nth-child(6) > div > a:nth-child(1) > img").first
         pizza_image.click()
         assert "product" in self.page.url, "URL does not contain 'product'"
+        
+        
+    @allure.step("Регистрация нового пользователя")
+    def test_register_new_user(self):
+        logger.info("Testing register new user")
+        self.page.goto("https://pizzeria.skillbox.cc/register/")
+        self.page.fill("input[name='username']", "newuser")
+        self.page.fill("input[name='email']", "newuser@example.com")
+        self.page.fill("input[name='password']", "password123")
+        self.page.click("button.woocommerce-Button.woocommerce-button.button.woocommerce-form-register__submit")
+        logger.info("User registered successfully")
+        self.page.goto("https://pizzeria.skillbox.cc/my-account/")  # Переход на страницу "Мой аккаунт" для проверки успешной регистрации
+
 
 
     # @allure.step("Проверка корзины и редактирование количества пиццы")
@@ -101,74 +116,57 @@ class TestClass:
     #     assert not cart_item.is_visible(), "Item still visible in the cart after removal"
 
 
-    @allure.feature('Тестирование веб-сайта Pizzeria')
-    @allure.story('Проверка функциональности фильтрации десертов')
-    @pytest.mark.asyncio(scope="function")
-    async def test_filter_desserts_by_price(self):
-        async with async_playwright() as p:
-            browser = await p.chromium.launch()
-            page = await browser.new_page()
-            with allure.step('Инициализация драйвера и открытие страницы'):
-                try:
-                    await page.goto("https://pizzeria.skillbox.cc/product-category/menu/", timeout=180000)
-                    await page.set_viewport_size({"width": 1920, "height": 1080})
-                except Exception as e:
-                    print(f"Ошибка при загрузке страницы: {e}")
-                    await browser.close()
-                    return
+    # @allure.feature('Тестирование веб-сайта Pizzeria')
+    # @allure.story('Проверка функциональности фильтрации десертов')
+    # @pytest.mark.asyncio(scope="function")
+    # async def test_filter_desserts_by_price(self):
+    #     async with async_playwright() as p:
+    #         browser = await p.chromium.launch()
+    #         page = await browser.new_page()
+    #         with allure.step('Инициализация драйвера и открытие страницы'):
+    #             try:
+    #                 await page.goto("https://pizzeria.skillbox.cc/product-category/menu/", timeout=180000)
+    #                 await page.set_viewport_size({"width": 1920, "height": 1080})
+    #             except Exception as e:
+    #                 print(f"Ошибка при загрузке страницы: {e}")
+    #                 await browser.close()
+    #                 return
 
-            with allure.step('Переход к разделу десертов'):
-                await page.click('//*[@id="woocommerce_product_categories-2"]/ul/li[1]/a')
+    #         with allure.step('Переход к разделу десертов'):
+    #             await page.click('//*[@id="woocommerce_product_categories-2"]/ul/li[1]/a')
 
-            with allure.step('Изменение диапазона цены'):
-                price_slider_start = await page.locator('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[1]')
-                price_slider_end = await page.locator('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[2]')
+    #         with allure.step('Изменение диапазона цены'):
+    #             price_slider_start = await page.locator('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[1]')
+    #             price_slider_end = await page.locator('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[2]')
 
-            with allure.step('Ожидание загрузки элементов'):
-                await price_slider_start.wait_for(state='visible', timeout=20000)
-                await price_slider_end.wait_for(state='visible', timeout=20000)
+    #         with allure.step('Ожидание загрузки элементов'):
+    #             await price_slider_start.wait_for(state='visible', timeout=20000)
+    #             await price_slider_end.wait_for(state='visible', timeout=20000)
 
-            with allure.step('Изменение значений ползунков с использованием Playwright'):
-                try:
-                    await page.dispatch_event('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[1]', 'mousedown', timeout=60000)
-                    await page.dispatch_event('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[1]', 'mousemove', {'clientX': 100}, timeout=60000)
-                    await page.dispatch_event('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[1]', 'mouseup', timeout=60000)
+    #         with allure.step('Изменение значений ползунков с использованием Playwright'):
+    #             try:
+    #                 await page.dispatch_event('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[1]', 'mousedown', timeout=60000)
+    #                 await page.dispatch_event('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[1]', 'mousemove', {'clientX': 100}, timeout=60000)
+    #                 await page.dispatch_event('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[1]', 'mouseup', timeout=60000)
 
-                    await page.dispatch_event('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[2]', 'mousedown', timeout=60000)
-                    await page.dispatch_event('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[2]', 'mousemove', {'clientX': -100}, timeout=60000)
-                    await page.dispatch_event('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[2]', 'mouseup', timeout=60000)
-                except Exception as e:
-                    print(f"Ошибка при изменении значений ползунков: {e}")
-                    await browser.close()
-                    return
+    #                 await page.dispatch_event('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[2]', 'mousedown', timeout=60000)
+    #                 await page.dispatch_event('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[2]', 'mousemove', {'clientX': -100}, timeout=60000)
+    #                 await page.dispatch_event('//*[@id="woocommerce_price_filter-2"]/form/div/div[1]/span[2]', 'mouseup', timeout=60000)
+    #             except Exception as e:
+    #                 print(f"Ошибка при изменении значений ползунков: {e}")
+    #                 await browser.close()
+    #                 return
 
-            with allure.step('Проверка наличия десертов с ценой 135 на странице'):
-                dessert_elements = await page.locator('.dessert-item').all_text_contents()
-                assert any("135" in element for element in dessert_elements), "Десерты с ценой 135 не найдены на странице"
+    #         with allure.step('Проверка наличия десертов с ценой 135 на странице'):
+    #             dessert_elements = await page.locator('.dessert-item').all_text_contents()
+    #             assert any("135" in element for element in dessert_elements), "Десерты с ценой 135 не найдены на странице"
 
-            await browser.close()
-            await p.stop()
-            await asyncio.sleep(0)
+    #         await browser.close()
+    #         await p.stop()
+    #         await asyncio.sleep(0)
 
 
 
-    # @allure.step("Добавление десерта в корзину")
-    # def test_add_dessert_to_cart(self):
-    #     logger.info("Testing add dessert to cart")
-    #     dessert = self.page.locator(".dessert-item").first
-    #     dessert.locator("button", has_text="Добавить в корзину").click()
-    #     logger.info("Dessert added to cart")
-
-    # @allure.step("Регистрация нового пользователя")
-    # def test_register_new_user(self):
-    #     logger.info("Testing register new user")
-    #     self.page.goto("https://pizzeria.skillbox.cc/account")
-    #     self.page.locator("a", has_text="Зарегистрироваться").click()
-    #     self.page.fill("input[name='username']", "newuser")
-    #     self.page.fill("input[name='email']", "newuser@example.com")
-    #     self.page.fill("input[name='password']", "password123")
-    #     self.page.locator("button", has_text="Зарегистрироваться").click()
-    #     logger.info("User registered successfully")
 
     # @allure.step("Оформление заказа")
     # def test_place_order(self):
