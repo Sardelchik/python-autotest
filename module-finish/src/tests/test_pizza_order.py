@@ -1,15 +1,15 @@
-import pytest
+import logging
+import allure
 from allure import feature, story
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from playwright.sync_api import sync_playwright
 from playwright.sync_api import Page
-import logging
-import allure
+
 
 logger = logging.getLogger(__name__)
 
-class TestClass:
+class TestClass:   
     def setup_method(self):
         self.playwright = sync_playwright().start()
         self.browser = self.playwright.chromium.launch()
@@ -26,15 +26,34 @@ class TestClass:
         slider = self.page.locator(".prod1-slider")
         assert slider.is_visible()
 
-    @allure.step("Добавление пиццы в корзину")
-    def test_add_pizza_to_cart(self):
-        logger.info("Testing adding pizza to cart")
-        img_element = self.driver.find_element(By.XPATH, '(//img[@src="http://pizzeria.skillbox.cc/wp-content/uploads/2021/10/pexels-natasha-filippovskaya-4394612-300x300.jpg"])[1]')
-        add_to_cart_button = self.driver.find_element(By.XPATH, "(//*[@class='button product_type_simple add_to_cart_button ajax_add_to_cart'])[5]")
-        actions = ActionChains(self.driver)
-        actions.move_to_element(img_element).pause(2).click(add_to_cart_button).pause(2)
-        actions.perform()
-        logger.info("Pizzas added to cart successfully")
+    @allure.title("Добавление в корзину")
+    def test_add_to_cart(self):
+        logger.info("Тестирование добавления в корзину")
+        self.page.goto("http://pizzeria.skillbox.cc/")
+
+        # Достаем элемент картинки
+        img_element = self.page.query_selector(
+            '(//img[@src="http://pizzeria.skillbox.cc/wp-content/uploads/2021/10/pexels-natasha-filippovskaya-4394612-300x300.jpg"])[1]'
+        )
+
+        # Достаем элемент кнопки "Добавить в корзину"
+        add_to_cart_button = self.page.query_selector(
+            "(//*[@class='button product_type_simple add_to_cart_button ajax_add_to_cart'])[5]"
+        )
+
+        # Перемещаем на картинку мышку с таймингом
+        self.page.hover(img_element)
+        self.page.wait_for_timeout(2000)  # pause for 2 seconds
+
+        # Кликаем на кнопку "Добавить в корзину"
+        self.page.click(add_to_cart_button)
+        self.page.wait_for_timeout(2000)  # pause for 2 seconds
+
+        logger.info("Товар добавлен в корзину успешно")
+        cart_text = self.page.text_content(".cart-contents")
+        assert "1 item" in cart_text, "Товар не добавлен в корзину"
+
+
 
 
     @allure.step("Переход к описанию пиццы")
@@ -55,7 +74,7 @@ class TestClass:
         self.page.fill("input[name='password']", "password123")
         self.page.click("button.woocommerce-Button.woocommerce-button.button.woocommerce-form-register__submit")
         logger.info("User registered successfully")
-        self.page.goto("https://pizzeria.skillbox.cc/my-account/")  # Переход на страницу "Мой аккаунт" для проверки успешной регистрации
+        self.page.goto("https://pizzeria.skillbox.cc/my-account/")
 
 
 
