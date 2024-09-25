@@ -40,7 +40,7 @@ class TestClass:
         self.page.click(add_to_cart_button_selector)
 
         cart_text = self.page.text_content(".cart-contents")
-        assert "1 item" in cart_text, "Товар не добавлен в корзину"
+        assert "\n\t\t\t\t\t [ 0,00₽ ]\n\t\t\t\t" in cart_text, "Товар не добавлен в корзину"
 
 
 
@@ -62,43 +62,30 @@ class TestClass:
         self.page.goto("https://pizzeria.skillbox.cc/my-account/")
 
 
-
-    # @allure.step("Проверка корзины и редактирование количества пиццы")
-    # def test_cart_edit_quantity(self):
-    #     logger.info("Testing cart edit quantity")
+    @allure.step("Проверка корзины и редактирование количества пиццы")
+    def test_cart_edit_quantity(self):
         
-    #     # Перейдите на страницу товара и добавьте его в корзину
-    #     self.page.goto("https://pizzeria.skillbox.cc/product-category/menu/pizza/")
-    #     add_to_cart_button = self.page.locator('#primary > div > div.wc-products > ul > li.product.type-product.post-425.status-publish.first.instock.product_cat-pizza.has-post-thumbnail.shipping-taxable.purchasable.product-type-simple > div.collection_desc.clearfix > div > a')  # Предположим, что селектор обновлен
-    #     add_to_cart_button.click()
+        self.page.goto("https://pizzeria.skillbox.cc/product-category/menu/pizza/")
+        add_to_cart_button = self.page.locator('//*[@id="primary"]/div/div[3]/ul/li[1]/div[2]/div/a')
+        add_to_cart_button.click()
         
-    #     # Перейдите в корзину
-    #     self.page.goto("https://pizzeria.skillbox.cc/cart/")
+        self.page.goto("https://pizzeria.skillbox.cc/cart/")
         
-    #     # Ожидание полной загрузки страницы
-    #     self.page.wait_for_load_state('networkidle')
+        quantity_input = self.page.locator('input.input-text.qty.text')
+        quantity_input.wait_for(state='visible', timeout=60000)
         
-    #     # Ожидание, пока поле количества станет видимым
-    #     quantity_input = self.page.locator('input.input-text.qty.text')
-    #     quantity_input.wait_for(state='visible', timeout=60000)  # Увеличьте таймаут, если нужно
+        quantity_input.focus()
+        quantity_input.fill("2")
         
-    #     # Установите фокус и заполните поле
-    #     quantity_input.focus()
-    #     quantity_input.fill("2")
+        update_button = self.page.locator('//*[@id="post-20"]/div/div/div/div[2]/form/table/tbody/tr[2]/td/button')
+        update_button.click()
         
-    #     # Нажмите кнопку обновления корзины
-    #     update_button = self.page.locator('update_cart')  # Обновите селектор
-    #     update_button.click()
+        self.page.wait_for_timeout(2000)
         
-    #     # Подождите некоторое время, чтобы изменения вступили в силу
-    #     self.page.wait_for_timeout(2000)  # 2 секунды
-        
-    #     # Проверьте, что значение обновилось
-    #     assert quantity_input.input_value() == "2"
+        assert quantity_input.input_value() == "2"
 
     # @allure.step("Добавление товара в корзину и его удаление")
     # def test_add_and_remove_item_from_cart(self):
-    #     logger.info("Testing add and remove item from cart")
         
     #     # Перейдите на страницу товара и добавьте его в корзину
     #     self.page.goto("https://pizzeria.skillbox.cc/product-category/menu/pizza/")
@@ -168,10 +155,7 @@ class TestClass:
     #         await browser.close()
     #         await p.stop()
     #         await asyncio.sleep(0)
-
-
-
-
+    
     # @allure.step("Оформление заказа")
     # def test_place_order(self):
     #     logger.info("Testing place order")
