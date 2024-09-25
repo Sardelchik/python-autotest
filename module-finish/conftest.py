@@ -3,7 +3,11 @@ from logging.handlers import RotatingFileHandler
 
 # Настройка формата логирования
 log_format = "[%(asctime)s] %(levelname)s - %(message)s"
-logging.basicConfig(level=logging.INFO, format=log_format, datefmt='%Y-%m-%d %H:%M:%S,%f')
+logging.basicConfig(
+   level=logging.DEBUG,
+   format='[%(levelname)s][%(asctime)s][%(name)s] %(message)s',
+   datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 # Создание обработчика для записи логов в файл с ротацией
 handler = RotatingFileHandler('request.log', maxBytes=5000000, backupCount=5)

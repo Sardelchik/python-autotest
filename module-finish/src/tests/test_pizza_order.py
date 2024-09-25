@@ -1,13 +1,13 @@
-import logging
 import allure
 from allure import feature, story
+from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from playwright.sync_api import sync_playwright
-from playwright.sync_api import Page
+from playwright.sync_api import sync_playwright, Page
 
-
-logger = logging.getLogger(__name__)
+driver = webdriver.Chrome()
+actions = ActionChains(driver)
 
 class TestClass:   
     def setup_method(self):
@@ -22,43 +22,30 @@ class TestClass:
 
     @allure.title("Проверка отображения слайдера на главной странице")
     def test_slider_display(self):
-        logger.info("Testing slider display on homepage")
         slider = self.page.locator(".prod1-slider")
         assert slider.is_visible()
 
+
     @allure.title("Добавление в корзину")
     def test_add_to_cart(self):
-        logger.info("Тестирование добавления в корзину")
         self.page.goto("http://pizzeria.skillbox.cc/")
 
         # Достаем элемент картинки
-        img_element = self.page.query_selector(
-            '(//img[@src="http://pizzeria.skillbox.cc/wp-content/uploads/2021/10/pexels-natasha-filippovskaya-4394612-300x300.jpg"])[1]'
-        )
+        img_selector = '(//img[@src="http://pizzeria.skillbox.cc/wp-content/uploads/2021/10/pexels-natasha-filippovskaya-4394612-300x300.jpg"])[1]'
 
         # Достаем элемент кнопки "Добавить в корзину"
-        add_to_cart_button = self.page.query_selector(
-            "(//*[@class='button product_type_simple add_to_cart_button ajax_add_to_cart'])[5]"
-        )
+        add_to_cart_button_selector = "(//*[@class='button product_type_simple add_to_cart_button ajax_add_to_cart'])[5]"
 
-        # Перемещаем на картинку мышку с таймингом
-        self.page.hover(img_element)
-        self.page.wait_for_timeout(2000)  # pause for 2 seconds
+        self.page.hover(img_selector)
+        self.page.click(add_to_cart_button_selector)
 
-        # Кликаем на кнопку "Добавить в корзину"
-        self.page.click(add_to_cart_button)
-        self.page.wait_for_timeout(2000)  # pause for 2 seconds
-
-        logger.info("Товар добавлен в корзину успешно")
         cart_text = self.page.text_content(".cart-contents")
         assert "1 item" in cart_text, "Товар не добавлен в корзину"
 
 
 
-
     @allure.step("Переход к описанию пиццы")
     def test_view_pizza_description(self):
-        logger.info("Testing view pizza description")
         slider = self.page.locator(".prod1-slider")
         pizza_image = slider.locator("#accesspress_store_product-5 > ul > div > div > li:nth-child(6) > div > a:nth-child(1) > img").first
         pizza_image.click()
@@ -67,13 +54,11 @@ class TestClass:
         
     @allure.step("Регистрация нового пользователя")
     def test_register_new_user(self):
-        logger.info("Testing register new user")
         self.page.goto("https://pizzeria.skillbox.cc/register/")
         self.page.fill("input[name='username']", "newuser")
         self.page.fill("input[name='email']", "newuser@example.com")
         self.page.fill("input[name='password']", "password123")
         self.page.click("button.woocommerce-Button.woocommerce-button.button.woocommerce-form-register__submit")
-        logger.info("User registered successfully")
         self.page.goto("https://pizzeria.skillbox.cc/my-account/")
 
 
