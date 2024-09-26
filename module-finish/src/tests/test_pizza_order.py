@@ -1,13 +1,14 @@
 import allure
 from allure import feature, story
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
 from playwright.sync_api import sync_playwright, Page
 
-driver = webdriver.Chrome()
-actions = ActionChains(driver)
+
+# service = Service('C:/Users/eseni/.wdm/drivers/chromedriver/win64/126.0.6478.126/chromedriver-win32/chromedriver.exe')
+# driver = webdriver.Chrome(service=service)
 
 class TestClass:   
     def setup_method(self):
@@ -27,20 +28,63 @@ class TestClass:
 
 
     @allure.title("Добавление в корзину")
-    def test_add_to_cart(self):
-        self.page.goto("http://pizzeria.skillbox.cc/")
+    def test_add_to_cart(self, set_up_browser):
+        driver = set_up_browser
 
-        # Достаем элемент картинки
-        img_selector = '(//img[@src="http://pizzeria.skillbox.cc/wp-content/uploads/2021/10/pexels-natasha-filippovskaya-4394612-300x300.jpg"])[1]'
+        with allure.step("Открытие главной страницы"):
 
-        # Достаем элемент кнопки "Добавить в корзину"
-        add_to_cart_button_selector = "(//*[@class='button product_type_simple add_to_cart_button ajax_add_to_cart'])[5]"
+            driver.get("https://pizzeria.skillbox.cc/")
 
-        self.page.hover(img_selector)
-        self.page.click(add_to_cart_button_selector)
+        with allure.step("Кладём два товара в корзину"):
 
-        cart_text = self.page.text_content(".cart-contents")
-        assert "\n\t\t\t\t\t [ 0,00₽ ]\n\t\t\t\t" in cart_text, "Товар не добавлен в корзину"
+            el_1 = driver.find_element(
+
+                By.XPATH,
+
+                '(//img[@src="http://pizzeria.skillbox.cc/wp-content/uploads/2021/10/pexels-natasha-filippovskaya-4394612-300x300.jpg"])[1]',
+
+            )
+
+            el_2 = driver.find_element(
+
+                By.XPATH,
+
+                "(//*[@class='button product_type_simple add_to_cart_button ajax_add_to_cart'])[5]",
+
+            )
+
+            el_3 = driver.find_element(
+
+                By.XPATH,
+
+                "(//img[@src='http://pizzeria.skillbox.cc/wp-content/uploads/2021/10/pexels-katerina-holmes-5908222-300x300.jpg'])[2]",
+
+            )
+
+            el_4 = driver.find_element(
+
+                By.XPATH,
+
+                "(//*[@class='button product_type_simple add_to_cart_button ajax_add_to_cart'])[6]",
+
+            )
+
+            actions = ActionChains(driver)
+
+            actions.move_to_element(el_1).pause(2)
+
+            actions.click(el_2).pause(2)
+
+            actions.perform()
+
+            actions.move_to_element(el_3).pause(2)
+
+            actions.click(el_4).pause(2)
+
+            actions.perform()
+        with allure.step("Проверяем наличие товара в корзине"):
+            cart_text = self.page.text_content(".cart-contents")
+            assert "\n\t\t\t\t\t [ 0,00₽ ]\n\t\t\t\t" in cart_text, "Товар не добавлен в корзину"
 
 
 
