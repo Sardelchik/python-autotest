@@ -2,6 +2,7 @@ import pytest
 import logging
 from selenium import webdriver
 from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -12,7 +13,7 @@ from logging_config import setup_logging
 def set_up_browser():
     options = Options()
     options.page_load_strategy = 'normal'
-    driver = Chrome(service=Service(ChromeDriverManager().install()))
+    driver = Chrome(service=Service(executable_path='C:\\Users\\eseni\\.wdm\\drivers\\chromedriver\\win64\\129.0.6668.70\\chromedriver-win64\\chromedriver.exe'))
     driver.implicitly_wait(3)
     yield driver
     driver.quit()
