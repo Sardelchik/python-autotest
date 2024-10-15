@@ -12,8 +12,12 @@ from logging_config import setup_logging
 @pytest.fixture()
 def set_up_browser():
     options = Options()
-    options.page_load_strategy = 'normal'
-    driver = Chrome(service=Service(executable_path='C:\\Users\\eseni\\.wdm\\drivers\\chromedriver\\win64\\129.0.6668.70\\chromedriver-win64\\chromedriver.exe'))
+    options.page_load_strategy = "normal"
+    driver = Chrome(
+        service=Service(
+            executable_path="C:\\Users\\eseni\\.wdm\\drivers\\chromedriver\\win64\\129.0.6668.70\\chromedriver-win64\\chromedriver.exe"
+        )
+    )
     driver.implicitly_wait(3)
     yield driver
     driver.quit()
@@ -23,16 +27,16 @@ def set_up_browser():
 def browser():
     setup_logging()
     # Логирование перед запуском браузера
-    logging.info('Запуск браузера')
-    
+    logging.info("Запуск браузера")
+
     # Здесь код для запуска браузера
-    
+
     yield browser  # Возвращаем экземпляр браузера для тестов
-    
+
     # Логирование после закрытия браузера
-    logging.info('Закрытие браузера')
+    logging.info("Закрытие браузера")
     # Здесь код для закрытия браузера
-    
+
 
 @pytest.fixture
 def driver():
